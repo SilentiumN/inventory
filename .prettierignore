@@ -1,0 +1,7 @@
+# Ignore artifacts:
+node_modules
+public
+build
+src/assets
+test
+package-lock.json
