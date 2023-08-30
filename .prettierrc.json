@@ -1,7 +1,7 @@
 {
   "trailingComma": "all",
   "tabWidth": 2,
-  "vueIndentScriptAndStyle": true,
+  "vueIndentScriptAndStyle": false,
   "semi": true,
   "singleQuote": true,
   "singleAttributePerLine": true,
@@ -9,7 +9,7 @@
   "arrowParens": "avoid",
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "quoteProps": "consistent",
+  "quoteProps": "as-needed",
   "useTabs": false,
   "endOfLine": "auto"
 }
