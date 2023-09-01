@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+// TYPES
+// типы иконок
 export type iconName = 'grid' | 'armor' | 'weapons' | 'misc' | 'close' | 'cooldown';
+
+// параметры иконок
 interface Props {
   size: string;
   name: iconName;
   color?: string;
 }
 
+// VARIABLES
+// пропсы
 const props = defineProps<Props>();
 
+// COMPUTED
+// текущий цвет иконки
 const currentColor = computed(() => {
   if (props.color) {
     return props.color;
@@ -19,7 +27,7 @@ const currentColor = computed(() => {
 </script>
 
 <template>
-  <!--ICONS-->
+  <!-- ИКОНКИ -->
   <svg
     v-if="props.name === 'grid'"
     :width="size"

@@ -1,25 +1,30 @@
 <script setup lang="ts">
-// interface
 import { computed } from 'vue';
 import piniaInventoryStore from "@/store/inventory";
 
-// interface
+// TYPES
+// тип пропсов
 interface Props {
   text: string;
 }
 
-// store
+// STORE
 const inventoryStore = piniaInventoryStore();
 
-// variables
+// VARIABLES
+// пропсы
 const props = defineProps<Props>();
 
-// computed
+// COMPUTED
+// позиция подсказки от верха
 const positionTop = computed(() => inventoryStore.positionTooltipTop);
+
+// позиция подсказки слева
 const positionLeft = computed(() => inventoryStore.positionTooltipLeft);
 </script>
 
 <template>
+  <!-- ПОДСКАЗКА -->
   <div
     v-if="positionTop && positionLeft"
     class="inventory-tooltip"
@@ -35,12 +40,11 @@ const positionLeft = computed(() => inventoryStore.positionTooltipLeft);
   top: var(--position-top);
   left: var(--position-left);
   border-radius: 0px 5px 5px 5px;
-  border: 2px solid #6c6c6c;
-  background: #1a1a1a;
+  border: 2px solid $gray-light-secondary;
+  background: $dark;
   padding: 0.4375rem 0.75rem;
-  color: #969696;
+  color: $light;
   @include font('sm-plus', 'regular', 'Archivo Black');
-  max-width: 8.22%;
   word-break: break-word;
 }
 </style>

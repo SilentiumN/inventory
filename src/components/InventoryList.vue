@@ -1,35 +1,37 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import InventoryListItem from '@/components/InventoryListItem.vue';
 import type { InventoryItem } from '@/types/inventory';
+import piniaInventoryStore from "@/store/inventory";
 
-// interface
-interface Props {
-  filledInventoryList: InventoryItem[];
-  maxCountItemInRow: number;
-  maxCountColumn: number;
-}
+// STORE
+const inventoryStore = piniaInventoryStore();
 
-// variables
-const props = defineProps<Props>();
-
+// VARIABLES
+// список всех ячеек инвентаря
 const inventoryList: Ref<(InventoryItem | null)[]> = ref([]);
 
-// function
+// FUNCTIONS
+// функция для инициализации ячеек инвентаря
 const fillInventory = (length: number) => {
   inventoryList.value = Array(length).fill(null);
 };
+
+// функция, объединяющая все необходимые действия при инициализации
 const init = () => {
   fillInventory(40);
 };
 
-// watch
-watch(
-  () => props.filledInventoryList,
+// COMPUTED
+// заполненные ячейки инвентаря
+const filledInventoryList = computed(() => inventoryStore.filteredInventoryList)
+
+// WATCH
+// обновление ячеек инвентаря при изменении заполненных ячеек
+watch(filledInventoryList,
   (newVal) => {
     if (newVal) {
-      console.log('watcher');
       const getInventoryLength = (
         filledInventoryListLength: number,
         minInventoryLength: number,
@@ -42,25 +44,27 @@ watch(
 
       fillInventory(getInventoryLength(newVal.length, 40));
 
-      inventoryList.value = inventoryList.value.map((_, i) => props.filledInventoryList[i] || null);
+      inventoryList.value = inventoryList.value.map((_, i) => filledInventoryList.value[i] || null);
 
       console.log(inventoryList.value);
     }
   },
 );
 
-// hooks
+// HOOKS
 onMounted(() => {
   init();
 });
 </script>
 
 <template>
+  <!-- СПИСОК ЯЧЕЕК ИНВЕНТАРЯ -->
   <div class="inventory-list">
+    <!-- ЯЧЕЙКИ ИНВЕНТАРЯ -->
     <InventoryListItem
       v-for="index in inventoryList.length"
       :key="index"
-      :inventoryItem="props.filledInventoryList[index] || null"
+      :inventoryItem="filledInventoryList[index - 1] || null"
     />
   </div>
 </template>

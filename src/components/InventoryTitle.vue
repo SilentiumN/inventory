@@ -1,14 +1,17 @@
 <script setup lang="ts">
-// interface
+// TYPES
+// тип пропсов
 interface Props {
   title: string;
 }
 
-// variables
+// VARIABLES
+// пропсы
 const props = defineProps<Props>();
 </script>
 
 <template>
+  <!-- ЗАГОЛОВОК -->
   <div class="inventory-title">
     {{ props.title }}
   </div>

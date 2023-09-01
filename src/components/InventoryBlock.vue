@@ -2,27 +2,33 @@
 import InventoryList from '@/components/InventoryList.vue';
 import { computed, ref, watch, Ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
-import type { AxiosInstance } from 'axios';
-import type { InventoryItem, Tab } from '@/types/inventory';
+import type { Tab } from '@/types/inventory';
 import InventoryTabs from '@/components/InventoryTabs.vue';
 import InventoryFilter from '@/components/InventoryFilter.vue';
 import InventoryTitle from '@/components/InventoryTitle.vue';
-import { FilterItemName } from '@/types/inventory';
 import InventoryTooltip from '@/components/InventoryTooltip.vue';
 import piniaInventoryStore from "@/store/inventory";
 
-// store
+// STORE
 const inventoryStore = piniaInventoryStore();
 
-// variables
+// ROUTE
 const route = useRoute();
-const instance: Ref<AxiosInstance | null> = ref(null);
-const inventoryList: Ref<InventoryItem[]> = ref([]);
+
+// VARIABLES
+// ссылка на контейнер списка ячеек инвентаря
 const inventoryListContainer: Ref<HTMLDivElement | null> = ref(null);
+
+// максимальная высота контейнера списка ячеек инвентаря
 const maxHeightInventoryList: Ref<number> = ref(0);
-const maxCountColumnInventoryList: Ref<number> = ref(8);
+
+// максимальное количество строк списка ячеек инвентаря без прокрутки
+const maxCountRowInventoryList: Ref<number> = ref(8);
+
+// максимальное количество ячеек в строке списка ячеек инвентаря
 const maxCountItemInRowInventoryList: Ref<number> = ref(5);
+
+// вкладки
 const tabs: Ref<Tab[]> = ref([
   {
     name: 'backpack',
@@ -35,71 +41,57 @@ const tabs: Ref<Tab[]> = ref([
     disabled: true,
   },
 ]);
-const selectedFilter: Ref<FilterItemName> = ref('all');
 
 
-// function
-const checkInstance = () => {
-  if (!instance.value) {
-    instance.value = axios.create({
-      timeout: 5000,
-    });
-  }
-};
-const getInventoryState = (caseFromRoute: string) => {
-  checkInstance();
-
-  if (instance.value) {
-    instance.value
-      .get(
-        `https://us-central1-seven-seven-bit-inhouse-helper.cloudfunctions.net/vueDevTestTask-getInventoryState?case=${caseFromRoute}`,
-      )
-      .then((res) => {
-        const { data } = res;
-        const { inventory } = data;
-
-        inventoryList.value = inventory || [];
-        console.log(inventoryList.value);
-      });
-  }
-};
-
+// FUNCTIONS
+// функция для расчета и установки максимальной высоты блока, в котором размещаются предметы инвентаря
 const setMaxHeightInventoryList = () => {
   const block = inventoryListContainer.value;
+
   if (block) {
-    console.log(block.clientWidth);
     maxHeightInventoryList.value = Math.ceil(
       block.clientWidth *
-        (maxCountColumnInventoryList.value / maxCountItemInRowInventoryList.value) +
+        (maxCountRowInventoryList.value / maxCountItemInRowInventoryList.value) +
         2,
     );
   }
 };
 
+// функция, объединяющая все необходимые действия при изменении экрана
 const onResize = () => {
   setMaxHeightInventoryList();
 };
 
+// функция, объединяющая все необходимые действия при инициализации
 const init = () => {
   setMaxHeightInventoryList();
 };
 
+// функция добавления к окну ивента изменения размеров экрана
 const addResizeEvent = () => {
   window.addEventListener('resize', onResize);
 };
 
+// функция удаления у окна ивента изменения размеров экрана
 const removeResizeEvent = () => {
   window.removeEventListener('resize', onResize);
 };
 
-const setSelectedFilter = (value: FilterItemName) => {
-  selectedFilter.value = value;
-};
+// функция для обновления заполненных ячеек инвентаря
+const updateInventoryState = (caseFromRoute: string) => {
+  inventoryStore.getInventoryState(caseFromRoute)
+}
 
-// computed
+// COMPUTED
+// тип инвентаря
 const queryCase = computed(() => route.query.case);
+
+// текущее имя фильтра инвентаря
+const currentFilterName = computed(() => inventoryStore.currentFilterName)
+
+// заголовок инвентаря
 const inventoryTitle = computed(() => {
-  switch (selectedFilter.value) {
+  switch (currentFilterName.value) {
   case 'all':
     return 'all items';
   case 'armor':
@@ -113,23 +105,18 @@ const inventoryTitle = computed(() => {
   }
 });
 
-const filteredInventoryList = computed((): InventoryItem[] => {
-  if (selectedFilter.value === 'all') {
-    return inventoryList.value;
-  }
-  return inventoryList.value.filter((item) => item.type === selectedFilter.value);
-});
-
+// сообщение подсказки при наведении на ячейку инвентаря
 const tooltipMessage = computed(() => inventoryStore.tooltipMessage)
 
-// watch
+// WATCH
+// обновление заполненных ячеек инвентаря при изменении типа инвентаря
 watch(queryCase, (newVal) => {
   if (newVal) {
-    getInventoryState(newVal.toString());
+    updateInventoryState(newVal.toString());
   }
 });
 
-// hooks
+// HOOKS
 onMounted(() => {
   init();
   addResizeEvent();
@@ -141,15 +128,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- ИНВЕНТАРЬ -->
   <div class="inventory-block">
+    <!-- ВКЛАДКИ ИНВЕНТАРЯ -->
     <InventoryTabs :tabs="tabs" />
+    <!-- КОНТЕНТ ВКЛАДКИ ИНВЕНТАРЯ -->
     <div class="inventory-block__content">
-      <InventoryFilter
-        :selected-filter="selectedFilter"
-        @setSelectedFilter="setSelectedFilter"
-      />
+      <!-- ФИЛЬТР ИНВЕНТАРЯ -->
+      <InventoryFilter/>
+      <!-- КОНТЕЙНЕР ОТФИЛЬТРОВАННОГО КОНТЕНТА ИНВЕНТАРЯ -->
       <div class="inventory-block__container-inventory">
+        <!--ЗАГОЛОВОК СПИСКА ЯЧЕЕК ИНВЕНТАРЯ-->
         <InventoryTitle :title="inventoryTitle" />
+        <!-- КОНТЕЙНЕР СПИСКА ЯЧЕЕК ИНВЕНТАРЯ -->
         <div
           ref="inventoryListContainer"
           class="inventory-block__container-inventory-list"
@@ -157,14 +148,15 @@ onBeforeUnmount(() => {
             'max-height': `${maxHeightInventoryList}px`,
           }"
         >
+          <!-- СПИСОК ЯЧЕЕК ИНВЕНТАРЯ -->
           <InventoryList
-            :filledInventoryList="filteredInventoryList"
             :maxCountItemInRow="maxCountItemInRowInventoryList"
-            :maxCountColumn="maxCountColumnInventoryList"
+            :maxCountColumn="maxCountRowInventoryList"
           />
         </div>
       </div>
     </div>
+    <!-- ПОДСКАЗКА С НАЗВАНИЕМ ПРЕДМЕТА -->
     <InventoryTooltip
       v-if="tooltipMessage"
       :text="tooltipMessage"
@@ -179,7 +171,7 @@ onBeforeUnmount(() => {
   max-height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #242223;
+  background-color: $gray-dark;
 
   &__content {
     display: grid;
@@ -207,7 +199,7 @@ onBeforeUnmount(() => {
     &::-webkit-scrollbar-track {
       border-right: 9px solid transparent;
       border-left: 9px solid transparent;
-      background-color: #454545;
+      background-color: $gray-light;
       background-clip: padding-box;
     }
 
@@ -215,7 +207,7 @@ onBeforeUnmount(() => {
       border-left: 8px solid transparent;
       border-right: 8px solid transparent;
       background-clip: padding-box;
-      background-color: #d9d9d9;
+      background-color: $light;
     }
   }
 }

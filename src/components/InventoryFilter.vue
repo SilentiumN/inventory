@@ -2,25 +2,22 @@
 import IconSet from '@/components/UI/IconSet.vue';
 import type { iconName } from '@/components/UI/IconSet.vue';
 import type { FilterItemName } from '@/types/inventory';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
+import piniaInventoryStore from "@/store/inventory";
 
-// interface
+// TYPES
+// тип элемента фильтра
 interface FilterItem {
   name: FilterItemName;
   icon: iconName;
 }
 
-interface Props {
-  selectedFilter: FilterItemName;
-}
+// STORE
+const inventoryStore = piniaInventoryStore();
 
-// variables
-const props = defineProps<Props>();
-const emit = defineEmits<{
-  setSelectedFilter: [value: FilterItemName];
-}>();
-
+// VARIABLES
+// список фильтров
 const filterList: Ref<FilterItem[]> = ref([
   {
     name: 'all',
@@ -40,18 +37,25 @@ const filterList: Ref<FilterItem[]> = ref([
   },
 ]);
 
-// function
+// FUNCTIONS
+// функция обновления фильтра
 const updateSelectedFilter = (value: FilterItemName) => {
-  emit('setSelectedFilter', value);
+  inventoryStore.updateFilterName(value);
 };
+
+// COMPUTED
+// текущее название фильтра
+const currentFilterName = computed(() => inventoryStore.currentFilterName)
 </script>
 
 <template>
+  <!-- ФИЛЬТР -->
   <div class="inventory-filter">
+    <!-- КНОПКИ ФИЛЬТРА -->
     <button
       :class="{
         'inventory-filter__btn': true,
-        'inventory-filter__btn_active': props.selectedFilter === filterItem.name,
+        'inventory-filter__btn_active': currentFilterName === filterItem.name,
       }"
       type="button"
       v-for="filterItem in filterList"
@@ -71,7 +75,7 @@ const updateSelectedFilter = (value: FilterItemName) => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background-color: #393839;
+  background-color: $gray;
   height: 100%;
   padding: 0.75rem;
 

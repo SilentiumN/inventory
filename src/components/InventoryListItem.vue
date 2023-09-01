@@ -1,30 +1,36 @@
 <script setup lang="ts">
 import { InventoryItem } from '@/types/inventory';
 import IconSet from '@/components/UI/IconSet.vue';
-import piniaInventoryStore from "@/store/inventory";
+import piniaInventoryStore from '@/store/inventory';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 
-// interface
+// TYPES
+// интерфейс пропсов
 interface Props {
   inventoryItem: InventoryItem | null;
 }
 
-// variables
-const props = defineProps<Props>();
-// store
+// STORE
 const inventoryStore = piniaInventoryStore();
-const inventoryListItemContent: Ref<HTMLDivElement|null> = ref(null)
 
-// function
+// VARIABLES
+// пропсы
+const props = defineProps<Props>();
+
+// ссылка на контент ячейки инвентаря
+const inventoryListItemContent: Ref<HTMLDivElement | null> = ref(null);
+
+// FUNCTIONS
+// функция для получения оставшихся секунд до снятия отката
 const getSecondsCooldown = (cooldownTimestamp: number): number => {
   const currentDate = new Date();
   const currentTimestamp = currentDate.getTime();
-  console.log(currentTimestamp, cooldownTimestamp);
 
   return Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
 };
 
+// функция для получения подсветки ячейки инвентаря
 const getBackgroundSettingsInventoryListItem = (type: InventoryItem['type']): string => {
   const backgroundColor = {
     armor: 'radial-gradient(59.14% 59.14% at 50% 50%, #367CCE 0%, rgba(0, 95, 206, 0.00) 100%)',
@@ -35,24 +41,32 @@ const getBackgroundSettingsInventoryListItem = (type: InventoryItem['type']): st
   return `center / contain ${backgroundColor[type]} no-repeat border-box`;
 };
 
+// функция для обновления текста подсказки при наведении на ячейку
 const updateTooltipText = (value: string) => {
   inventoryStore.updateTooltipMessage(value);
-}
-
+};
 </script>
 
 <template>
+  <!-- ЯЧЕЙКА ИНВЕНТАРЯ -->
   <div
-class="inventory-list-item" >
+    class="inventory-list-item"
+    @mouseover="updateTooltipText(props.inventoryItem?.name || '')"
+    @focusin="updateTooltipText(props.inventoryItem?.name || '')"
+  >
+    <!-- КОНТЕНТ ЯЧЕЙКИ ИНВЕНТАРЯ -->
     <div
       ref="inventoryListItemContent"
-      class="inventory-list-item__content"
+      :class="{
+        'inventory-list-item__content': true,
+        'inventory-list-item__content_cooldown': props.inventoryItem.cooldown,
+      }"
       v-if="props.inventoryItem"
       :style="{
         background: getBackgroundSettingsInventoryListItem(props.inventoryItem.type),
       }"
-      @mousemove="updateTooltipText(props.inventoryItem.name)"
     >
+      <!-- КАРТИНКА ПРЕДМЕТА -->
       <img
         :class="{
           'inventory-list-item__image': true,
@@ -61,18 +75,21 @@ class="inventory-list-item" >
         :src="props.inventoryItem.imageUrl"
         :alt="props.inventoryItem.name"
       />
+      <!-- ОСТАВШЕЕСЯ КОЛИЧЕСТВО ПРЕДМЕТА -->
       <div
         v-if="props.inventoryItem.count"
         class="inventory-list-item__count"
       >
         {{ `x${props.inventoryItem.count}` }}
       </div>
+      <!-- МАКСИМАЛЬНОЕ И ОСТАВШЕЕСЯ КОЛИЧЕСТВО ЗАРЯДОВ ПРЕДМЕТА -->
       <div
         v-if="props.inventoryItem.charges && props.inventoryItem.maxCharges"
         class="inventory-list-item__charges"
       >
         {{ `${props.inventoryItem.charges}/${props.inventoryItem.maxCharges}` }}
       </div>
+      <!-- ОСТАВШЕЕСЯ ВРЕМЯ ДО ОТКАТА -->
       <div
         class="inventory-list-item__cooldown"
         v-if="props.inventoryItem.cooldown"
@@ -95,8 +112,8 @@ class="inventory-list-item" >
 .inventory-list-item {
   aspect-ratio: 1/1;
   position: relative;
-  border: 1px solid #454545;
-  background-color: #1a1a1a;
+  border: 1px solid $gray-light;
+  background-color: $dark;
 
   &__content {
     position: absolute;
@@ -105,6 +122,11 @@ class="inventory-list-item" >
     left: 0;
     right: 0;
     padding: 0.625rem;
+    cursor: pointer;
+
+    &_cooldown {
+      cursor: default;
+    }
   }
 
   &__image {
@@ -119,7 +141,7 @@ class="inventory-list-item" >
 
   &__count,
   &__charges {
-    color: #fff;
+    color: $white;
     font-family:
       JetBrains Mono,
       serif;

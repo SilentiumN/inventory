@@ -2,20 +2,24 @@
 import IconSet from '@/components/UI/IconSet.vue';
 import type { Tab } from '@/types/inventory';
 
-// interface
+// TYPES
+// тип пропсов
 interface Props {
   tabs: Tab[];
 }
 
-// variables
+// VARIABLES
+// пропсы
 const props = defineProps<Props>();
 </script>
 
 <template>
+  <!-- СПИСОК ВКЛАДОК -->
   <div
     class="inventory-tabs"
     :style="{ '--count-tabs': props.tabs.length }"
   >
+    <!-- ЭЛЕМЕНТЫ ВКЛАДОК -->
     <div
       :class="{
         'inventory-tabs__item': true,
@@ -26,6 +30,7 @@ const props = defineProps<Props>();
     >
       {{ tab.title.toUpperCase() }}
     </div>
+    <!-- КНОПКА ЗАКРЫТИЯ -->
     <button
       class="inventory-tabs__item"
       type="button"
@@ -53,7 +58,7 @@ const props = defineProps<Props>();
     cursor: pointer;
 
     &_disabled {
-      background-color: #393839;
+      background-color: $gray;
       color: rgba($white, 0.5);
     }
 

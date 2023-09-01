@@ -5,5 +5,3 @@ import InventoryBlock from '@/components/InventoryBlock.vue';
 <template>
   <InventoryBlock />
 </template>
-
-<style lang="scss"></style>
