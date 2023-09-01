@@ -1,0 +1,26 @@
+@mixin font($size: 'medium', $weight: 'regular', $family: 'JetBrains Mono') {
+  $font-size: map-get((
+          'sm': 0.9375rem,
+          'sm-plus': 1rem,
+          'medium': 1.0625rem,
+          'lg': 1.25rem,
+          'lg-plus': 1.5rem,
+  ), $size);
+
+  $font-weight: map-get((
+          'regular': 400,
+          'medium': 500,
+  ), $weight);
+
+  $font-family: map-get((
+          'JetBrains Mono': ('JetBrains Mono', monospace),
+          'Archivo Black': ('Archivo Black', sans-serif),
+          'inherit': inherit,
+  ), $family);
+
+  font-size: $font-size;
+  font-weight: $font-weight;
+  font-family: $font-family;
+  line-height: normal;
+  font-style: normal;
+}

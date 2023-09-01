@@ -4,15 +4,21 @@ module.exports = {
     node: true,
   },
   settings: {
+    'import/extensions': ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
     'import/resolver': {
+      typescript: {},
       alias: {
-        map: [
-          ['@', './src'],
-        ],
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+        },
+        map: [['@', './src']],
       },
     },
   },
-  extends: ['plugin:vue/vue3-essential', '@vue/airbnb', '@vue/typescript/recommended'],
+  extends: ['plugin:vue/vue3-essential', '@vue/airbnb', '@vue/typescript/recommended', 'prettier'],
   parserOptions: {
     ecmaVersion: 2020,
   },
@@ -25,5 +31,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 'error',
     'node/no-missing-require': 'off',
     'node/no-extraneous-import': 'off',
+    'import/extensions': 'off',
   },
 };
