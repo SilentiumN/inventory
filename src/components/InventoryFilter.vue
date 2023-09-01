@@ -90,6 +90,7 @@ const currentFilterName = computed(() => inventoryStore.currentFilterName)
     display: flex;
     align-items: center;
     justify-content: center;
+    @include  default-transition();
 
     &_active {
       opacity: 1;

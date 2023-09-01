@@ -56,13 +56,11 @@ const props = defineProps<Props>();
     padding: 1rem;
     border: 1px solid $black;
     cursor: pointer;
+    text-align: center;
 
     &_disabled {
       background-color: $gray;
       color: rgba($white, 0.5);
-    }
-
-    &:not(button) {
     }
 
     &:is(button) {

@@ -22,6 +22,7 @@ const props = defineProps<Props>();
   width: 100%;
   padding: 0 0.75rem;
   @include font('lg', 'regular', 'Archivo Black');
+  @include default-transition();
   text-transform: uppercase;
 }
 </style>

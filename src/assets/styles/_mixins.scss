@@ -24,3 +24,7 @@
   line-height: normal;
   font-style: normal;
 }
+
+@mixin default-transition() {
+  transition: all 0.25s ease-in-out;
+}

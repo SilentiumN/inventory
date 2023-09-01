@@ -45,6 +45,7 @@ const positionLeft = computed(() => inventoryStore.positionTooltipLeft);
   padding: 0.4375rem 0.75rem;
   color: $light;
   @include font('sm-plus', 'regular', 'Archivo Black');
+  @include default-transition();
   word-break: break-word;
 }
 </style>

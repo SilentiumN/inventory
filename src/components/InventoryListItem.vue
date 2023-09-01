@@ -20,6 +20,8 @@ const props = defineProps<Props>();
 
 // ссылка на контент ячейки инвентаря
 const inventoryListItemContent: Ref<HTMLDivElement | null> = ref(null);
+// проверка загрузилась ли картинка
+const isLoadingImg: Ref<boolean> = ref(true);
 
 // FUNCTIONS
 // функция для получения оставшихся секунд до снятия отката
@@ -67,14 +69,18 @@ const updateTooltipText = (value: string) => {
       }"
     >
       <!-- КАРТИНКА ПРЕДМЕТА -->
-      <img
-        :class="{
+      <Transition name="fade">
+        <img
+          :class="{
           'inventory-list-item__image': true,
           'inventory-list-item__image_cooldown': props.inventoryItem.cooldown,
         }"
-        :src="props.inventoryItem.imageUrl"
-        :alt="props.inventoryItem.name"
-      />
+          :src="props.inventoryItem.imageUrl"
+          :alt="props.inventoryItem.name"
+          v-show='!isLoadingImg'
+          @load='isLoadingImg = false'
+        />
+      </Transition>
       <!-- ОСТАВШЕЕСЯ КОЛИЧЕСТВО ПРЕДМЕТА -->
       <div
         v-if="props.inventoryItem.count"
@@ -133,6 +139,7 @@ const updateTooltipText = (value: string) => {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    @include default-transition();
 
     &_cooldown {
       opacity: 0.3;
@@ -155,6 +162,7 @@ const updateTooltipText = (value: string) => {
     @include font('medium', 'medium', 'JetBrains Mono');
     bottom: 0;
     right: 0.25rem;
+    text-align: right;
   }
 
   &__charges {

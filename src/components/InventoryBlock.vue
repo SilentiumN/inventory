@@ -172,6 +172,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   background-color: $gray-dark;
+  word-break: break-word;
 
   &__content {
     display: grid;
