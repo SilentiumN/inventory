@@ -26,5 +26,5 @@
 }
 
 @mixin default-transition() {
-  transition: all 0.25s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
