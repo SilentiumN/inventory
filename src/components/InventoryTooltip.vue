@@ -17,10 +17,10 @@ const props = defineProps<Props>();
 
 // COMPUTED
 // позиция подсказки от верха
-const positionTop = computed(() => inventoryStore.positionTooltipTop);
+const positionTop = computed((): number => inventoryStore.positionTooltipTop);
 
 // позиция подсказки слева
-const positionLeft = computed(() => inventoryStore.positionTooltipLeft);
+const positionLeft = computed((): number => inventoryStore.positionTooltipLeft);
 </script>
 
 <template>

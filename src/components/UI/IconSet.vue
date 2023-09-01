@@ -18,7 +18,7 @@ const props = defineProps<Props>();
 
 // COMPUTED
 // текущий цвет иконки
-const currentColor = computed(() => {
+const currentColor = computed((): string => {
   if (props.color) {
     return props.color;
   }

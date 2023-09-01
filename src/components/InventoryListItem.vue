@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { InventoryItem } from '@/types/inventory';
+import type { Ref } from 'vue';
 import IconSet from '@/components/UI/IconSet.vue';
 import piniaInventoryStore from '@/store/inventory';
-import type { Ref } from 'vue';
 import { computed, ref } from 'vue';
 
 // TYPES
@@ -45,14 +45,14 @@ const getBackgroundSettingsInventoryListItem = (type: InventoryItem['type']): st
 };
 
 // функция для обновления текста подсказки при наведении на ячейку
-const updateTooltipText = (value: string) => {
+const updateTooltipText = (value: string): void => {
   inventoryStore.updateTooltipMessage(value);
 };
 
 // COMPUTED
 // есть ли откат у предмета
 const isCooldown = computed(
-  () => props.inventoryItem?.cooldown && getSecondsCooldown(props.inventoryItem.cooldown),
+  (): boolean => !!props.inventoryItem?.cooldown && !!getSecondsCooldown(props.inventoryItem.cooldown),
 );
 
 </script>

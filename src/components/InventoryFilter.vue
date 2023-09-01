@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { iconName } from '@/components/UI/IconSet.vue';
-import IconSet from '@/components/UI/IconSet.vue';
 import type { FilterItemName } from '@/types/inventory';
 import type { Ref } from 'vue';
+import IconSet from '@/components/UI/IconSet.vue';
 import { computed, ref } from 'vue';
 import piniaInventoryStore from '@/store/inventory';
 
@@ -39,13 +39,13 @@ const filterList: Ref<FilterItem[]> = ref([
 
 // FUNCTIONS
 // функция обновления фильтра
-const updateSelectedFilter = (value: FilterItemName) => {
+const updateSelectedFilter = (value: FilterItemName): void => {
   inventoryStore.updateFilterName(value);
 };
 
 // COMPUTED
 // текущее название фильтра
-const currentFilterName = computed(() => inventoryStore.currentFilterName);
+const currentFilterName = computed((): FilterItemName => inventoryStore.currentFilterName);
 </script>
 
 <template>

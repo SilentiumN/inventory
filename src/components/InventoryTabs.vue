@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import IconSet from '@/components/UI/IconSet.vue';
 import type { Tab } from '@/types/inventory';
+import IconSet from '@/components/UI/IconSet.vue';
 
 // TYPES
 // тип пропсов

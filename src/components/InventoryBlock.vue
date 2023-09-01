@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import InventoryList from '@/components/InventoryList.vue';
 import type { Ref } from 'vue';
+import type { LocationQueryValue } from 'vue-router';
+import type { FilterItemName, Tab } from '@/types/inventory';
+import InventoryList from '@/components/InventoryList.vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import type { Tab } from '@/types/inventory';
 import InventoryTabs from '@/components/InventoryTabs.vue';
 import InventoryFilter from '@/components/InventoryFilter.vue';
 import InventoryTitle from '@/components/InventoryTitle.vue';
@@ -48,7 +49,7 @@ const tabs: Ref<Tab[]> = ref([
 
 // FUNCTIONS
 // функция для расчета и установки максимальной высоты блока, в котором размещаются предметы инвентаря
-const setMaxHeightInventoryList = () => {
+const setMaxHeightInventoryList = (): void => {
   const block = inventoryListContainer.value;
 
   if (block) {
@@ -60,39 +61,39 @@ const setMaxHeightInventoryList = () => {
 };
 
 // функция, объединяющая все необходимые действия при изменении экрана
-const onResize = () => {
+const onResize = (): void => {
   setMaxHeightInventoryList();
 };
 
 // функция, объединяющая все необходимые действия при инициализации
-const init = () => {
+const init = (): void => {
   setMaxHeightInventoryList();
 };
 
 // функция добавления к окну ивента изменения размеров экрана
-const addResizeEvent = () => {
+const addResizeEvent = (): void => {
   window.addEventListener('resize', onResize);
 };
 
 // функция удаления у окна ивента изменения размеров экрана
-const removeResizeEvent = () => {
+const removeResizeEvent = (): void => {
   window.removeEventListener('resize', onResize);
 };
 
 // функция для обновления заполненных ячеек инвентаря
-const updateInventoryState = (caseFromRoute: string) => {
+const updateInventoryState = (caseFromRoute: string): void => {
   inventoryStore.getInventoryState(caseFromRoute);
 };
 
 // COMPUTED
 // тип инвентаря
-const queryCase = computed(() => route.query.case);
+const queryCase = computed(():LocationQueryValue | LocationQueryValue[] | undefined => route.query.case);
 
 // текущее имя фильтра инвентаря
-const currentFilterName = computed(() => inventoryStore.currentFilterName);
+const currentFilterName = computed((): FilterItemName => inventoryStore.currentFilterName);
 
 // заголовок инвентаря
-const inventoryTitle = computed(() => {
+const inventoryTitle = computed((): string => {
   switch (currentFilterName.value) {
   case 'all':
     return 'all items';
@@ -108,23 +109,23 @@ const inventoryTitle = computed(() => {
 });
 
 // сообщение подсказки при наведении на ячейку инвентаря
-const tooltipMessage = computed(() => inventoryStore.tooltipMessage);
+const tooltipMessage = computed((): string => inventoryStore.tooltipMessage);
 
 // WATCH
 // обновление заполненных ячеек инвентаря при изменении типа инвентаря
-watch(queryCase, (newVal) => {
+watch(queryCase, (newVal): void => {
   if (newVal) {
     updateInventoryState(newVal.toString());
   }
 });
 
 // HOOKS
-onMounted(() => {
+onMounted((): void => {
   init();
   addResizeEvent();
 });
 
-onBeforeUnmount(() => {
+onBeforeUnmount((): void => {
   removeResizeEvent();
 });
 </script>

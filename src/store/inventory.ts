@@ -1,10 +1,12 @@
+import type { Ref } from 'vue';
+import type { AxiosInstance } from 'axios';
+import type { FilterItemName, InventoryItem } from '@/types/inventory';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
-import type { Ref } from 'vue';
 import { computed, ref, watch } from 'vue';
-import type { AxiosInstance } from 'axios';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
-import type { FilterItemName, InventoryItem } from '@/types/inventory';
+
 
 export default defineStore('inventory', () => {
   // axios
@@ -20,7 +22,7 @@ export default defineStore('inventory', () => {
   const currentFilterName: Ref<FilterItemName> = ref('all');
 
   // функция для проверка создан ли экземпляр axios'а
-  function checkInstance() {
+  function checkInstance(): void {
     if (!instance.value) {
       instance.value = axios.create({
         timeout: 5000,
@@ -29,7 +31,7 @@ export default defineStore('inventory', () => {
   }
 
   // функция для получения заполненных ячеек инвентаря
-  function getInventoryState(caseFromRoute: string) {
+  function getInventoryState(caseFromRoute: string): void {
     checkInstance();
 
     if (instance.value) {
@@ -42,18 +44,17 @@ export default defineStore('inventory', () => {
           const { inventory } = data;
 
           inventoryList.value = inventory || [];
-          console.log(inventoryList.value);
         });
     }
   }
 
   // функция для обновления текста подсказки инвентаря
-  function updateTooltipMessage(value: string) {
+  function updateTooltipMessage(value: string): void {
     tooltipMessage.value = value;
   }
 
   // функция для обновления позиции подсказки
-  function setPositionTooltip(evt: MouseEvent) {
+  function setPositionTooltip(evt: MouseEvent): void {
     const isElInsideInventoryListContent = evt
       .composedPath()
       .some((i) =>
@@ -69,23 +70,22 @@ export default defineStore('inventory', () => {
   }
 
   // функция для добавления к окну события перемещения мыши
-  function addMouseMoveEventListener() {
+  function addMouseMoveEventListener(): void {
     document.addEventListener('mousemove', setPositionTooltip);
   }
 
   // функция для удаления у окна события перемещения мыши
-  function removeMouseMoveEventListener() {
+  function removeMouseMoveEventListener(): void {
     document.removeEventListener('mousemove', setPositionTooltip);
   }
 
   // функция для обновления текущего названия фильтра
-  function updateFilterName(value: FilterItemName) {
-    console.log(currentFilterName);
+  function updateFilterName(value: FilterItemName): void {
     currentFilterName.value = value;
   }
 
   // слежение за текстом подсказки и переключение события перемещения мыши у окна
-  watch(tooltipMessage, (newVal) => {
+  watch(tooltipMessage, (newVal: string): void => {
     if (newVal) {
       addMouseMoveEventListener();
       return;
@@ -98,10 +98,7 @@ export default defineStore('inventory', () => {
     if (currentFilterName.value === 'all') {
       return inventoryList.value;
     }
-    console.log(
-      currentFilterName.value,
-      inventoryList.value.filter((item) => item.type === currentFilterName.value),
-    );
+
     return inventoryList.value.filter((item) => item.type === currentFilterName.value);
   });
 

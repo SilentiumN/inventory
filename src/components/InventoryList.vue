@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue';
+import type { InventoryItem } from '@/types/inventory';
 import { computed, onMounted, ref, watch } from 'vue';
 import InventoryListItem from '@/components/InventoryListItem.vue';
-import type { InventoryItem } from '@/types/inventory';
 import piniaInventoryStore from '@/store/inventory';
 
 // STORE
@@ -14,24 +14,24 @@ const inventoryList: Ref<(InventoryItem | null)[]> = ref([]);
 
 // FUNCTIONS
 // функция для инициализации ячеек инвентаря
-const fillInventory = (length: number) => {
+const fillInventory = (length: number): void => {
   inventoryList.value = Array(length).fill(null);
 };
 
 // функция, объединяющая все необходимые действия при инициализации
-const init = () => {
+const init = (): void => {
   fillInventory(40);
 };
 
 // COMPUTED
 // заполненные ячейки инвентаря
-const filledInventoryList = computed(() => inventoryStore.filteredInventoryList);
+const filledInventoryList = computed(():InventoryItem[] => inventoryStore.filteredInventoryList);
 
 // WATCH
 // обновление ячеек инвентаря при изменении заполненных ячеек
 watch(filledInventoryList, (newVal) => {
   if (newVal) {
-    const getInventoryLength = (filledInventoryListLength: number, minInventoryLength: number) => {
+    const getInventoryLength = (filledInventoryListLength: number, minInventoryLength: number): number => {
       if (filledInventoryListLength > minInventoryLength) {
         return filledInventoryListLength;
       }
@@ -41,13 +41,11 @@ watch(filledInventoryList, (newVal) => {
     fillInventory(getInventoryLength(newVal.length, 40));
 
     inventoryList.value = inventoryList.value.map((_, i) => filledInventoryList.value[i] || null);
-
-    console.log(inventoryList.value);
   }
 });
 
 // HOOKS
-onMounted(() => {
+onMounted((): void => {
   init();
 });
 </script>
