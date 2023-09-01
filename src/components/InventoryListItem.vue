@@ -3,7 +3,7 @@ import type { InventoryItem } from '@/types/inventory';
 import IconSet from '@/components/UI/IconSet.vue';
 import piniaInventoryStore from '@/store/inventory';
 import type { Ref } from 'vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 // TYPES
 // интерфейс пропсов
@@ -28,8 +28,9 @@ const isLoadingImg: Ref<boolean> = ref(true);
 const getSecondsCooldown = (cooldownTimestamp: number): number => {
   const currentDate = new Date();
   const currentTimestamp = currentDate.getTime();
+  const timeLeftCooldown = Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
 
-  return Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
+  return timeLeftCooldown > 0 ? timeLeftCooldown : 0;
 };
 
 // функция для получения подсветки ячейки инвентаря
@@ -47,6 +48,13 @@ const getBackgroundSettingsInventoryListItem = (type: InventoryItem['type']): st
 const updateTooltipText = (value: string) => {
   inventoryStore.updateTooltipMessage(value);
 };
+
+// COMPUTED
+// есть ли откат у предмета
+const isCooldown = computed(
+  () => props.inventoryItem?.cooldown && getSecondsCooldown(props.inventoryItem.cooldown),
+);
+
 </script>
 
 <template>
@@ -62,7 +70,7 @@ const updateTooltipText = (value: string) => {
       ref="inventoryListItemContent"
       :class="{
         'inventory-list-item__content': true,
-        'inventory-list-item__content_cooldown': props.inventoryItem.cooldown,
+        'inventory-list-item__content_cooldown': isCooldown,
       }"
       :style="{
         background: getBackgroundSettingsInventoryListItem(props.inventoryItem.type),
@@ -75,7 +83,7 @@ const updateTooltipText = (value: string) => {
           :alt="props.inventoryItem.name"
           :class="{
             'inventory-list-item__image': true,
-            'inventory-list-item__image_cooldown': props.inventoryItem.cooldown,
+            'inventory-list-item__image_cooldown': isCooldown,
           }"
           :src="props.inventoryItem.imageUrl"
           @load="isLoadingImg = false"
@@ -97,7 +105,7 @@ const updateTooltipText = (value: string) => {
       </div>
       <!-- ОСТАВШЕЕСЯ ВРЕМЯ ДО ОТКАТА -->
       <div
-        v-if="props.inventoryItem.cooldown"
+        v-if="props.inventoryItem.cooldown && isCooldown"
         class="inventory-list-item__cooldown"
       >
         <IconSet
