@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineStore } from 'pinia';
-import { ref, watch, computed } from 'vue';
 import type { Ref } from 'vue';
-import axios from 'axios';
+import { computed, ref, watch } from 'vue';
 import type { AxiosInstance } from 'axios';
+import axios from 'axios';
 import type { FilterItemName, InventoryItem } from '@/types/inventory';
 
 export default defineStore('inventory', () => {
@@ -15,7 +15,7 @@ export default defineStore('inventory', () => {
   const positionTooltipTop: Ref<number> = ref(0);
   const positionTooltipLeft: Ref<number> = ref(0);
   // список ячеек инвентаря
-  const inventoryList: Ref<InventoryItem[]> = ref([])
+  const inventoryList: Ref<InventoryItem[]> = ref([]);
   // текущий фильтр
   const currentFilterName: Ref<FilterItemName> = ref('all');
 
@@ -54,7 +54,11 @@ export default defineStore('inventory', () => {
 
   // функция для обновления позиции подсказки
   function setPositionTooltip(evt: MouseEvent) {
-    const isElInsideInventoryListContent = evt.composedPath().some(i => i instanceof HTMLElement ? i.classList.contains('inventory-list-item__content') : false);
+    const isElInsideInventoryListContent = evt
+      .composedPath()
+      .some((i) =>
+        i instanceof HTMLElement ? i.classList.contains('inventory-list-item__content') : false,
+      );
 
     if (isElInsideInventoryListContent) {
       positionTooltipLeft.value = (evt.pageX || evt.clientX) + 5;
@@ -76,7 +80,7 @@ export default defineStore('inventory', () => {
 
   // функция для обновления текущего названия фильтра
   function updateFilterName(value: FilterItemName) {
-    console.log(currentFilterName)
+    console.log(currentFilterName);
     currentFilterName.value = value;
   }
 
@@ -86,15 +90,18 @@ export default defineStore('inventory', () => {
       addMouseMoveEventListener();
       return;
     }
-    removeMouseMoveEventListener()
-  })
+    removeMouseMoveEventListener();
+  });
 
   // получение отфильтрованного инвентаря
   const filteredInventoryList = computed((): InventoryItem[] => {
     if (currentFilterName.value === 'all') {
       return inventoryList.value;
     }
-    console.log(currentFilterName.value, inventoryList.value.filter((item) => item.type === currentFilterName.value))
+    console.log(
+      currentFilterName.value,
+      inventoryList.value.filter((item) => item.type === currentFilterName.value),
+    );
     return inventoryList.value.filter((item) => item.type === currentFilterName.value);
   });
 
@@ -107,6 +114,6 @@ export default defineStore('inventory', () => {
     inventoryList,
     updateFilterName,
     currentFilterName,
-    filteredInventoryList
-  }
+    filteredInventoryList,
+  };
 });

@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { InventoryItem } from '@/types/inventory';
 import IconSet from '@/components/UI/IconSet.vue';
 import piniaInventoryStore from '@/store/inventory';
-import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { ref } from 'vue';
 
 // TYPES
 // интерфейс пропсов
@@ -53,17 +53,17 @@ const updateTooltipText = (value: string) => {
   <!-- ЯЧЕЙКА ИНВЕНТАРЯ -->
   <div
     class="inventory-list-item"
-    @mouseover="updateTooltipText(props.inventoryItem?.name || '')"
     @focusin="updateTooltipText(props.inventoryItem?.name || '')"
+    @mouseover="updateTooltipText(props.inventoryItem?.name || '')"
   >
     <!-- КОНТЕНТ ЯЧЕЙКИ ИНВЕНТАРЯ -->
     <div
+      v-if="props.inventoryItem"
       ref="inventoryListItemContent"
       :class="{
         'inventory-list-item__content': true,
         'inventory-list-item__content_cooldown': props.inventoryItem.cooldown,
       }"
-      v-if="props.inventoryItem"
       :style="{
         background: getBackgroundSettingsInventoryListItem(props.inventoryItem.type),
       }"
@@ -71,14 +71,14 @@ const updateTooltipText = (value: string) => {
       <!-- КАРТИНКА ПРЕДМЕТА -->
       <Transition name="fade">
         <img
-          :class="{
-          'inventory-list-item__image': true,
-          'inventory-list-item__image_cooldown': props.inventoryItem.cooldown,
-        }"
-          :src="props.inventoryItem.imageUrl"
+          v-show="!isLoadingImg"
           :alt="props.inventoryItem.name"
-          v-show='!isLoadingImg'
-          @load='isLoadingImg = false'
+          :class="{
+            'inventory-list-item__image': true,
+            'inventory-list-item__image_cooldown': props.inventoryItem.cooldown,
+          }"
+          :src="props.inventoryItem.imageUrl"
+          @load="isLoadingImg = false"
         />
       </Transition>
       <!-- ОСТАВШЕЕСЯ КОЛИЧЕСТВО ПРЕДМЕТА -->
@@ -97,13 +97,13 @@ const updateTooltipText = (value: string) => {
       </div>
       <!-- ОСТАВШЕЕСЯ ВРЕМЯ ДО ОТКАТА -->
       <div
-        class="inventory-list-item__cooldown"
         v-if="props.inventoryItem.cooldown"
+        class="inventory-list-item__cooldown"
       >
         <IconSet
-          size="1.75rem"
           color="#fff"
           name="cooldown"
+          size="1.75rem"
         />
         <div class="inventory-list-item__cooldown-time">
           {{ getSecondsCooldown(props.inventoryItem.cooldown) }}
@@ -114,7 +114,7 @@ const updateTooltipText = (value: string) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-list-item {
   aspect-ratio: 1/1;
   position: relative;

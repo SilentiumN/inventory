@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import IconSet from '@/components/UI/IconSet.vue';
+<script lang="ts" setup>
 import type { iconName } from '@/components/UI/IconSet.vue';
+import IconSet from '@/components/UI/IconSet.vue';
 import type { FilterItemName } from '@/types/inventory';
-import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
-import piniaInventoryStore from "@/store/inventory";
+import { computed, ref } from 'vue';
+import piniaInventoryStore from '@/store/inventory';
 
 // TYPES
 // тип элемента фильтра
@@ -45,7 +45,7 @@ const updateSelectedFilter = (value: FilterItemName) => {
 
 // COMPUTED
 // текущее название фильтра
-const currentFilterName = computed(() => inventoryStore.currentFilterName)
+const currentFilterName = computed(() => inventoryStore.currentFilterName);
 </script>
 
 <template>
@@ -53,24 +53,24 @@ const currentFilterName = computed(() => inventoryStore.currentFilterName)
   <div class="inventory-filter">
     <!-- КНОПКИ ФИЛЬТРА -->
     <button
+      v-for="filterItem in filterList"
+      :key="filterItem.name"
       :class="{
         'inventory-filter__btn': true,
         'inventory-filter__btn_active': currentFilterName === filterItem.name,
       }"
       type="button"
-      v-for="filterItem in filterList"
-      :key="filterItem.name"
       @click="updateSelectedFilter(filterItem.name)"
     >
       <IconSet
-        size="2.6875rem"
         :name="filterItem.icon"
+        size="2.6875rem"
       />
     </button>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-filter {
   display: flex;
   flex-direction: column;
@@ -90,7 +90,7 @@ const currentFilterName = computed(() => inventoryStore.currentFilterName)
     display: flex;
     align-items: center;
     justify-content: center;
-    @include  default-transition();
+    @include default-transition();
 
     &_active {
       opacity: 1;

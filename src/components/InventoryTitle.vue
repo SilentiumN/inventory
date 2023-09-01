@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 // TYPES
 // тип пропсов
 interface Props {
@@ -17,7 +17,7 @@ const props = defineProps<Props>();
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-title {
   width: 100%;
   padding: 0 0.75rem;

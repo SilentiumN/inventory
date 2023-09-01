@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Ref } from 'vue';
-import { onMounted, ref, watch, computed } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import InventoryListItem from '@/components/InventoryListItem.vue';
 import type { InventoryItem } from '@/types/inventory';
-import piniaInventoryStore from "@/store/inventory";
+import piniaInventoryStore from '@/store/inventory';
 
 // STORE
 const inventoryStore = piniaInventoryStore();
@@ -25,31 +25,26 @@ const init = () => {
 
 // COMPUTED
 // заполненные ячейки инвентаря
-const filledInventoryList = computed(() => inventoryStore.filteredInventoryList)
+const filledInventoryList = computed(() => inventoryStore.filteredInventoryList);
 
 // WATCH
 // обновление ячеек инвентаря при изменении заполненных ячеек
-watch(filledInventoryList,
-  (newVal) => {
-    if (newVal) {
-      const getInventoryLength = (
-        filledInventoryListLength: number,
-        minInventoryLength: number,
-      ) => {
-        if (filledInventoryListLength > minInventoryLength) {
-          return filledInventoryListLength;
-        }
-        return minInventoryLength;
-      };
+watch(filledInventoryList, (newVal) => {
+  if (newVal) {
+    const getInventoryLength = (filledInventoryListLength: number, minInventoryLength: number) => {
+      if (filledInventoryListLength > minInventoryLength) {
+        return filledInventoryListLength;
+      }
+      return minInventoryLength;
+    };
 
-      fillInventory(getInventoryLength(newVal.length, 40));
+    fillInventory(getInventoryLength(newVal.length, 40));
 
-      inventoryList.value = inventoryList.value.map((_, i) => filledInventoryList.value[i] || null);
+    inventoryList.value = inventoryList.value.map((_, i) => filledInventoryList.value[i] || null);
 
-      console.log(inventoryList.value);
-    }
-  },
-);
+    console.log(inventoryList.value);
+  }
+});
 
 // HOOKS
 onMounted(() => {
@@ -69,7 +64,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-list {
   width: 100%;
   height: max-content;

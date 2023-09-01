@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import IconSet from '@/components/UI/IconSet.vue';
 import type { Tab } from '@/types/inventory';
 
@@ -16,17 +16,17 @@ const props = defineProps<Props>();
 <template>
   <!-- СПИСОК ВКЛАДОК -->
   <div
-    class="inventory-tabs"
     :style="{ '--count-tabs': props.tabs.length }"
+    class="inventory-tabs"
   >
     <!-- ЭЛЕМЕНТЫ ВКЛАДОК -->
     <div
+      v-for="tab in props.tabs"
+      :key="tab.name"
       :class="{
         'inventory-tabs__item': true,
         'inventory-tabs__item_disabled': tab.disabled,
       }"
-      v-for="tab in props.tabs"
-      :key="tab.name"
     >
       {{ tab.title.toUpperCase() }}
     </div>
@@ -36,14 +36,14 @@ const props = defineProps<Props>();
       type="button"
     >
       <IconSet
-        size="1.75rem"
         name="close"
+        size="1.75rem"
       />
     </button>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-tabs {
   display: grid;
   grid-template-columns: repeat(var(--count-tabs, 0), 1fr) max-content;

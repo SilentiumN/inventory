@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import InventoryList from '@/components/InventoryList.vue';
-import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import type { Ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Tab } from '@/types/inventory';
 import InventoryTabs from '@/components/InventoryTabs.vue';
 import InventoryFilter from '@/components/InventoryFilter.vue';
 import InventoryTitle from '@/components/InventoryTitle.vue';
 import InventoryTooltip from '@/components/InventoryTooltip.vue';
-import piniaInventoryStore from "@/store/inventory";
+import piniaInventoryStore from '@/store/inventory';
 
 // STORE
 const inventoryStore = piniaInventoryStore();
@@ -29,6 +29,9 @@ const maxCountRowInventoryList: Ref<number> = ref(8);
 // максимальное количество ячеек в строке списка ячеек инвентаря
 const maxCountItemInRowInventoryList: Ref<number> = ref(5);
 
+// текущая вкладка
+const currentTab: Ref<Tab['name']> = ref('backpack');
+
 // вкладки
 const tabs: Ref<Tab[]> = ref([
   {
@@ -43,7 +46,6 @@ const tabs: Ref<Tab[]> = ref([
   },
 ]);
 
-
 // FUNCTIONS
 // функция для расчета и установки максимальной высоты блока, в котором размещаются предметы инвентаря
 const setMaxHeightInventoryList = () => {
@@ -51,8 +53,7 @@ const setMaxHeightInventoryList = () => {
 
   if (block) {
     maxHeightInventoryList.value = Math.ceil(
-      block.clientWidth *
-        (maxCountRowInventoryList.value / maxCountItemInRowInventoryList.value) +
+      block.clientWidth * (maxCountRowInventoryList.value / maxCountItemInRowInventoryList.value) +
         2,
     );
   }
@@ -80,15 +81,15 @@ const removeResizeEvent = () => {
 
 // функция для обновления заполненных ячеек инвентаря
 const updateInventoryState = (caseFromRoute: string) => {
-  inventoryStore.getInventoryState(caseFromRoute)
-}
+  inventoryStore.getInventoryState(caseFromRoute);
+};
 
 // COMPUTED
 // тип инвентаря
 const queryCase = computed(() => route.query.case);
 
 // текущее имя фильтра инвентаря
-const currentFilterName = computed(() => inventoryStore.currentFilterName)
+const currentFilterName = computed(() => inventoryStore.currentFilterName);
 
 // заголовок инвентаря
 const inventoryTitle = computed(() => {
@@ -107,7 +108,7 @@ const inventoryTitle = computed(() => {
 });
 
 // сообщение подсказки при наведении на ячейку инвентаря
-const tooltipMessage = computed(() => inventoryStore.tooltipMessage)
+const tooltipMessage = computed(() => inventoryStore.tooltipMessage);
 
 // WATCH
 // обновление заполненных ячеек инвентаря при изменении типа инвентаря
@@ -134,9 +135,12 @@ onBeforeUnmount(() => {
     <!-- ВКЛАДКИ ИНВЕНТАРЯ -->
     <InventoryTabs :tabs="tabs" />
     <!-- КОНТЕНТ ВКЛАДКИ ИНВЕНТАРЯ -->
-    <div class="inventory-block__content">
+    <div
+      v-if="currentTab === 'backpack'"
+      class="inventory-block__content"
+    >
       <!-- ФИЛЬТР ИНВЕНТАРЯ -->
-      <InventoryFilter/>
+      <InventoryFilter />
       <!-- КОНТЕЙНЕР ОТФИЛЬТРОВАННОГО КОНТЕНТА ИНВЕНТАРЯ -->
       <div class="inventory-block__container-inventory">
         <!--ЗАГОЛОВОК СПИСКА ЯЧЕЕК ИНВЕНТАРЯ-->

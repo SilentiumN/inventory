@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed } from 'vue';
-import piniaInventoryStore from "@/store/inventory";
+import piniaInventoryStore from '@/store/inventory';
 
 // TYPES
 // тип пропсов
@@ -27,14 +27,14 @@ const positionLeft = computed(() => inventoryStore.positionTooltipLeft);
   <!-- ПОДСКАЗКА -->
   <div
     v-if="positionTop && positionLeft"
-    class="inventory-tooltip"
     :style="{ '--position-top': `${positionTop}px`, '--position-left': `${positionLeft}px` }"
+    class="inventory-tooltip"
   >
     {{ props.text.toUpperCase() }}
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .inventory-tooltip {
   position: absolute;
   top: var(--position-top);
