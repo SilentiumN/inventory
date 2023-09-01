@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InventoryItem } from '@/types/inventory';
+import type { InventoryItem } from '@/types/inventory';
 import IconSet from '@/components/UI/IconSet.vue';
 import piniaInventoryStore from '@/store/inventory';
 import { ref } from 'vue';

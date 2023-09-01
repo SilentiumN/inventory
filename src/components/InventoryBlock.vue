@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InventoryList from '@/components/InventoryList.vue';
-import { computed, ref, watch, Ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Tab } from '@/types/inventory';
 import InventoryTabs from '@/components/InventoryTabs.vue';

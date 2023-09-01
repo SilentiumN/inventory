@@ -2,8 +2,9 @@
 import { defineStore } from 'pinia';
 import { ref, watch, computed } from 'vue';
 import type { Ref } from 'vue';
-import axios, { AxiosInstance } from 'axios';
-import { FilterItemName, InventoryItem } from '@/types/inventory';
+import axios from 'axios';
+import type { AxiosInstance } from 'axios';
+import type { FilterItemName, InventoryItem } from '@/types/inventory';
 
 export default defineStore('inventory', () => {
   // axios
