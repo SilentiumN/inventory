@@ -40,7 +40,6 @@ const getSecondsCooldown = (): void => {
     const timeLeftCooldown = Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
 
     cooldownTime.value = timeLeftCooldown > 0 ? timeLeftCooldown : 0;
-    console.log(cooldownTime.value)
   }
 };
 
@@ -61,8 +60,7 @@ const updateTooltipText = (value: string): void => {
 };
 
 // фукнция для переключения интервала обновления времени отката
-const toggleInterval = () => {
-  console.log('toggle')
+const toggleInterval = (): void => {
   if (intervalUpdateCooldownTime.value) {
     clearInterval(intervalUpdateCooldownTime.value);
     return;
