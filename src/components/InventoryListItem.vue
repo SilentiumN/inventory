@@ -3,7 +3,7 @@ import type { InventoryItem } from '@/types/inventory';
 import type { Ref } from 'vue';
 import IconSet from '@/components/UI/IconSet.vue';
 import piniaInventoryStore from '@/store/inventory';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 // TYPES
 // интерфейс пропсов
@@ -23,14 +23,25 @@ const inventoryListItemContent: Ref<HTMLDivElement | null> = ref(null);
 // проверка загрузилась ли картинка
 const isLoadingImg: Ref<boolean> = ref(true);
 
+// время до отката
+const cooldownTime: Ref<number> = ref(0);
+
+// интервал для обновления времени отката
+const intervalUpdateCooldownTime: Ref<number | null> = ref(null);
+
 // FUNCTIONS
 // функция для получения оставшихся секунд до снятия отката
-const getSecondsCooldown = (cooldownTimestamp: number): number => {
-  const currentDate = new Date();
-  const currentTimestamp = currentDate.getTime();
-  const timeLeftCooldown = Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
+const getSecondsCooldown = (): void => {
+  const cooldownTimestamp = props.inventoryItem?.cooldown;
 
-  return timeLeftCooldown > 0 ? timeLeftCooldown : 0;
+  if (cooldownTimestamp) {
+    const currentDate = new Date();
+    const currentTimestamp = currentDate.getTime();
+    const timeLeftCooldown = Math.ceil((cooldownTimestamp - currentTimestamp) / 1000);
+
+    cooldownTime.value = timeLeftCooldown > 0 ? timeLeftCooldown : 0;
+    console.log(cooldownTime.value)
+  }
 };
 
 // функция для получения подсветки ячейки инвентаря
@@ -49,12 +60,37 @@ const updateTooltipText = (value: string): void => {
   inventoryStore.updateTooltipMessage(value);
 };
 
+// фукнция для переключения интервала обновления времени отката
+const toggleInterval = () => {
+  console.log('toggle')
+  if (intervalUpdateCooldownTime.value) {
+    clearInterval(intervalUpdateCooldownTime.value);
+    return;
+  }
+
+  intervalUpdateCooldownTime.value = setInterval(() => getSecondsCooldown(), 1000);
+};
+
 // COMPUTED
 // есть ли откат у предмета
-const isCooldown = computed(
-  (): boolean => !!props.inventoryItem?.cooldown && !!getSecondsCooldown(props.inventoryItem.cooldown),
-);
+const isCooldown = computed((): boolean => !!props.inventoryItem?.cooldown && !!cooldownTime.value);
 
+// WATCH
+// слежение, есть ли откат у предмета
+watch(() => props.inventoryItem?.cooldown, (newVal): void => {
+  if (newVal) {
+    getSecondsCooldown();
+  }
+})
+// слежение за временем отката и если откат прошел - снятие интервала
+watch(cooldownTime, (newVal): void => {
+  if (
+    (newVal && !intervalUpdateCooldownTime.value) ||
+    (!newVal && intervalUpdateCooldownTime.value)
+  ) {
+    toggleInterval();
+  }
+});
 </script>
 
 <template>
@@ -114,7 +150,7 @@ const isCooldown = computed(
           size="1.75rem"
         />
         <div class="inventory-list-item__cooldown-time">
-          {{ getSecondsCooldown(props.inventoryItem.cooldown) }}
+          {{ cooldownTime }}
           <span class="unit">s</span>
         </div>
       </div>
